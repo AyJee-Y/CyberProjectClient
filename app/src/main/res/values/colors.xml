@@ -2,4 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="Celeste">#99F7F4</color>
+    <color name="LightCyan">#D4FCFF</color>
+    <color name="LemonYellow">#FCFFA3</color>
+    <color name="Corn">#FCEC60</color>
+    <color name="NaplesYellow">#FCD960</color>
+
+    <color name="DarkBlueBlack">#0d1730</color>
+    <color name="SpaceCadet">#0b2152</color>
+    <color name="OldHeliotrope">#473162</color>
+    <color name="PurpleWine">#943b73</color>
+    <color name="RaspberryPink">#d35d8d</color>
 </resources>

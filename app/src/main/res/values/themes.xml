@@ -1,8 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.CyberProjectClient" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/NaplesYellow</item>
+        <item name="colorPrimaryVariant">@color/Corn</item>
+        <item name="colorOnPrimary">@color/black</item>
+
+        <item name="colorSecondary">@color/Celeste</item>
+        <item name="colorSecondaryVariant">@color/LightCyan</item>
+        <item name="colorOnSecondary">@color/black</item>
     </style>
 
     <style name="Theme.CyberProjectClient" parent="Base.Theme.CyberProjectClient" />
