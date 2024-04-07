@@ -57,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 resetActivity();
-                Intent i = new Intent(loginActivity.this , registerActivity.class);
-                startActivity(i);
+                //Intent i = new Intent(LoginActivity.this , RegisterActivity.class);
+                //startActivity(i);
             }
         }));
 
