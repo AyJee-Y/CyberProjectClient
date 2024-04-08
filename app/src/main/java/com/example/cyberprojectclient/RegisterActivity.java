@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.cyberprojectclient.network.networkAdapter;
+import com.example.cyberprojectclient.network.NetworkAdapter;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -75,8 +75,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                 String enteredUsername = username.getText().toString();
                 String enteredPassword = password.getText().toString();
+                String enteredFirstName = firstName.getText().toString();
+                String enteredLastName = lastName.getText().toString();
 
-                if (networkAdapter.attemptRegister(enteredUsername, enteredPassword)) {
+                if (NetworkAdapter.attemptRegister(enteredUsername, enteredPassword, enteredFirstName, enteredLastName)) {
                     output.setText("Registered, please sign in");
                     output.setTextColor(Color.GREEN);
                 }

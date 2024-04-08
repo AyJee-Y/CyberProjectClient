@@ -15,7 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
-import com.example.cyberprojectclient.network.networkAdapter;
+import com.example.cyberprojectclient.network.NetworkAdapter;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        networkAdapter.initializeUsers();
+        NetworkAdapter.initializeUsers();
         initializeActivity();
     }
 
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 String enteredUsername = username.getText().toString();
                 String enteredPassword = password.getText().toString();
 
-                if (networkAdapter.attemptSignIn(enteredUsername, enteredPassword)) {
+                if (NetworkAdapter.attemptSignIn(enteredUsername, enteredPassword)) {
                     output.setText("Signed in");
                     output.setTextColor(Color.GREEN);
                     output.setTextSize(32);
