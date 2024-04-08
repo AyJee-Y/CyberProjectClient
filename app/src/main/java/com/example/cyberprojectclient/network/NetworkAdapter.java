@@ -1,5 +1,7 @@
 package com.example.cyberprojectclient.network;
 
+import android.util.Log;
+
 public class NetworkAdapter {
     //Database structure:
     //[0] -> username
@@ -27,7 +29,8 @@ public class NetworkAdapter {
         for (int i = 0; i < userCount; i++) {
             if (currentDataTable[i][0].equals(username) && currentDataTable[i][1].equals(password))
             {
-                //Here i need to also save the index of the user
+                CurrentUserData.setUser(i+1);
+                CurrentUserData.updateFullData();
                 return true;
             }
         }
@@ -56,8 +59,9 @@ public class NetworkAdapter {
     }
 
     public static String[] getUserData(int userId) {
-        if (userId <= userCount && userId > 0)
-            return currentDataTable[userId-1];
+        if (userId <= userCount && userId > 0) {
+            return (new String[] {currentDataTable[userId-1][0], currentDataTable[userId-1][2], currentDataTable[userId-1][3], currentDataTable[userId-1][4]});
+        }
         else
             return null;
     }

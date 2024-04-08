@@ -21,8 +21,8 @@ public class CurrentUserData {
     public static void updateFullData() {
         String[] newData = NetworkAdapter.getUserData(userId);
         username = newData[0];
-        firstName = newData[2];
-        lastName = newData[3];
-        bio = newData[4];
+        firstName = newData[1];
+        lastName = newData[2];
+        bio = newData[3];
     }
 }

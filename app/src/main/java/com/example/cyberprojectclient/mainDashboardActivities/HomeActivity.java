@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
+import com.example.cyberprojectclient.network.CurrentUserData;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -36,6 +37,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(HomeActivity.this, ProfileActivity.class);
+                i.putExtra("userId", CurrentUserData.getUserId());
                 startActivity(i);
                 finish();
             }

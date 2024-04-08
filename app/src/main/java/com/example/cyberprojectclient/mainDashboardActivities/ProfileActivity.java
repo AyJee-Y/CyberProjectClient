@@ -2,8 +2,10 @@ package com.example.cyberprojectclient.mainDashboardActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,11 +14,22 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
+import com.example.cyberprojectclient.network.CurrentUserData;
+import com.example.cyberprojectclient.network.NetworkAdapter;
+
+import org.w3c.dom.Text;
 
 public class ProfileActivity extends AppCompatActivity {
 
     ImageButton home;
     ImageButton chat;
+
+    TextView fullName;
+    TextView username;
+    TextView bio;
+
+    private int thisUserId;
+    private Intent thisIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +44,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         home = (ImageButton) findViewById(R.id.home);
         chat = (ImageButton) findViewById(R.id.chat);
+        thisIntent = getIntent();
 
         home.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
@@ -48,5 +62,26 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         }));
+
+        fullName = (TextView) findViewById(R.id.fullName);
+        username = (TextView) findViewById(R.id.usernameDisplayer);
+        bio = (TextView) findViewById(R.id.bio);
+
+        initializeActivity();
+    }
+
+    protected void initializeActivity() {
+        thisUserId = thisIntent.getIntExtra("userId", 1);
+        String[] currentUserData;
+        if (thisUserId == CurrentUserData.getUserId()) {
+            currentUserData = CurrentUserData.getFullData();
+        }
+        else {
+            currentUserData = NetworkAdapter.getUserData(thisUserId);
+        }
+
+        fullName.setText(currentUserData[1] + " " + currentUserData[2]);
+        username.setText(currentUserData[0]);
+        bio.setText(currentUserData[3]);
     }
 }

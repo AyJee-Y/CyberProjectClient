@@ -64,15 +64,70 @@
         app:layout_constraintVertical_bias="0.533" />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="74dp"
-        android:layout_height="37dp"
-        android:text="Profile"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/profileMenu"
+        android:layout_width="333dp"
+        android:layout_height="523dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/profile_menu"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/profilePic"
+        android:layout_width="148dp"
+        android:layout_height="143dp"
+        android:layout_marginBottom="424dp"
+        android:background="@drawable/profile_picture_background"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.428"
+        app:srcCompat="@drawable/defualt_profile_icon" />
+
+    <TextView
+        android:id="@+id/fullName"
+        android:layout_width="251dp"
+        android:layout_height="27dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/profileMenu"
+        app:layout_constraintEnd_toEndOf="@+id/profileMenu"
+        app:layout_constraintStart_toStartOf="@+id/profileMenu"
+        app:layout_constraintTop_toTopOf="@+id/profileMenu"
+        app:layout_constraintVertical_bias="0.131" />
+
+    <TextView
+        android:id="@+id/usernameDisplayer"
+        android:layout_width="145dp"
+        android:layout_height="28dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profileMenu"
+        app:layout_constraintEnd_toEndOf="@+id/profileMenu"
+        app:layout_constraintStart_toStartOf="@+id/profileMenu"
+        app:layout_constraintTop_toTopOf="@+id/profileMenu"
+        app:layout_constraintVertical_bias="0.219" />
+
+    <TextView
+        android:id="@+id/bio"
+        android:layout_width="301dp"
+        android:layout_height="347dp"
+        android:text=""
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/profileMenu"
+        app:layout_constraintEnd_toEndOf="@+id/profileMenu"
+        app:layout_constraintStart_toStartOf="@+id/profileMenu"
+        app:layout_constraintTop_toTopOf="@+id/profileMenu"
+        app:layout_constraintVertical_bias="0.892" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
