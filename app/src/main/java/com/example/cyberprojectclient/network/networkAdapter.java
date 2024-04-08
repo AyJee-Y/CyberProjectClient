@@ -1,4 +1,4 @@
-package com.example.cyberprojectclient;
+package com.example.cyberprojectclient.network;
 
 import android.util.Log;
 
