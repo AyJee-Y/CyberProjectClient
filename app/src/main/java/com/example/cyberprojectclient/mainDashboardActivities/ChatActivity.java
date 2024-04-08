@@ -35,17 +35,17 @@ public class ChatActivity extends AppCompatActivity {
         home.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent i = new Intent(ChatActivity.this , HomeActivity.class);
+                Intent i = new Intent(ChatActivity.this , HomeActivity.class);
                 startActivity(i);
-                finish();*/
+                finish();
             }
         }));
         profile.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent i = new Intent(ChatActivity.this , ProfileActivity.class);
+                Intent i = new Intent(ChatActivity.this , ProfileActivity.class);
                 startActivity(i);
-                finish();*/
+                finish();
             }
         }));
     }

@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
 import com.example.cyberprojectclient.network.networkAdapter;
 
 public class LoginActivity extends AppCompatActivity {
@@ -68,9 +69,12 @@ public class LoginActivity extends AppCompatActivity {
                 String enteredPassword = password.getText().toString();
 
                 if (networkAdapter.attemptSignIn(enteredUsername, enteredPassword)) {
-                    output.setText("Signed in :)");
+                    output.setText("Signed in");
                     output.setTextColor(Color.GREEN);
                     output.setTextSize(32);
+
+                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(i);
                 }
                 else {
                     output.setText("Incorrect username or password");
