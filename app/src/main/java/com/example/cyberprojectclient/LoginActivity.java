@@ -15,7 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
-import com.example.cyberprojectclient.network.NetworkAdapter;
+import com.example.cyberprojectclient.utils.NetworkAdapter;
+import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -37,6 +38,12 @@ public class LoginActivity extends AppCompatActivity {
         });
         NetworkAdapter.initializeUsers();
         initializeActivity();
+
+        if (SharedPrefUtils.getBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus))) {
+            resetActivity();
+            Intent i = new Intent(LoginActivity.this , HomeActivity.class);
+            startActivity(i);
+        }
     }
 
     protected void resetActivity() {
@@ -68,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 String enteredUsername = username.getText().toString();
                 String enteredPassword = password.getText().toString();
 
-                if (NetworkAdapter.attemptSignIn(enteredUsername, enteredPassword)) {
+                if (NetworkAdapter.attemptSignIn(enteredUsername, enteredPassword, LoginActivity.this)) {
                     output.setText("Signed in");
                     output.setTextColor(Color.GREEN);
                     output.setTextSize(32);

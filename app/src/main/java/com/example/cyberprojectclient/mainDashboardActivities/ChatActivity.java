@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
-import com.example.cyberprojectclient.network.CurrentUserData;
+import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -45,7 +45,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ChatActivity.this , ProfileActivity.class);
-                i.putExtra("userId", CurrentUserData.getUserId());
+                i.putExtra("userId", SharedPrefUtils.getInt(ChatActivity.this, getString(R.string.prefUserId)));
                 startActivity(i);
                 finish();
             }

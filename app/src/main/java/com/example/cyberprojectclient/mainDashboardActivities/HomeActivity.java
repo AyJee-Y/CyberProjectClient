@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
-import com.example.cyberprojectclient.network.CurrentUserData;
+import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -37,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(HomeActivity.this, ProfileActivity.class);
-                i.putExtra("userId", CurrentUserData.getUserId());
+                i.putExtra("userId", SharedPrefUtils.getInt(HomeActivity.this, getString(R.string.prefUserId)));
                 startActivity(i);
                 finish();
             }

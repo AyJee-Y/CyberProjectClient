@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">CyberProjectClient</string>
+
+    <string name="prefLoggedStatus">Logged_In</string>
+    <string name="prefUserId">User_Id</string>
+    <string name="prefUsername">Username</string>
+    <string name="prefFirstName">First_Name</string>
+    <string name="prefLastName">Last_Name</string>
+    <string name="prefBio">Bio</string>
 </resources>

@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.cyberprojectclient.network.NetworkAdapter;
+import com.example.cyberprojectclient.utils.NetworkAdapter;
 
 public class RegisterActivity extends AppCompatActivity {
 

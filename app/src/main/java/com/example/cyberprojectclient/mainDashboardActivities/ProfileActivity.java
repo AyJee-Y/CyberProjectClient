@@ -2,7 +2,6 @@ package com.example.cyberprojectclient.mainDashboardActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -14,10 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
-import com.example.cyberprojectclient.network.CurrentUserData;
-import com.example.cyberprojectclient.network.NetworkAdapter;
-
-import org.w3c.dom.Text;
+import com.example.cyberprojectclient.utils.NetworkAdapter;
+import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -72,16 +69,36 @@ public class ProfileActivity extends AppCompatActivity {
 
     protected void initializeActivity() {
         thisUserId = thisIntent.getIntExtra("userId", 1);
-        String[] currentUserData;
-        if (thisUserId == CurrentUserData.getUserId()) {
-            currentUserData = CurrentUserData.getFullData();
+        String[] userData;
+        if (thisUserId == SharedPrefUtils.getInt(ProfileActivity.this, getString(R.string.prefUserId))) {
+            userData = getThisUserData();
         }
         else {
-            currentUserData = NetworkAdapter.getUserData(thisUserId);
+            userData = NetworkAdapter.getUserData(thisUserId);
         }
 
-        fullName.setText(currentUserData[1] + " " + currentUserData[2]);
-        username.setText(currentUserData[0]);
-        bio.setText(currentUserData[3]);
+        fullName.setText(userData[1] + " " + userData[2]);
+        username.setText(userData[0]);
+        bio.setText(userData[3]);
+    }
+
+    /**
+     * This function will get the user data of the user currently using this application
+     * from the shared preferences of the applications.
+     * They will be in the form of a string array with the indexes:
+     * 0 - username
+     * 1 - first name
+     * 2 - last name
+     * 3 - bio
+     * @return current users data - for a profile
+     */
+    protected String[] getThisUserData() {
+        String[] currentUserData = new String[4];
+        currentUserData[0] = SharedPrefUtils.getString(ProfileActivity.this, getString(R.string.prefUsername));
+        currentUserData[1] = SharedPrefUtils.getString(ProfileActivity.this, getString(R.string.prefFirstName));
+        currentUserData[2] = SharedPrefUtils.getString(ProfileActivity.this, getString(R.string.prefLastName));
+        currentUserData[3] = SharedPrefUtils.getString(ProfileActivity.this, getString(R.string.prefBio));
+
+        return currentUserData;
     }
 }
