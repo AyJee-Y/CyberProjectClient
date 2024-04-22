@@ -1,12 +1,16 @@
 package com.example.cyberprojectclient.mainDashboardActivities;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,6 +24,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     ImageButton home;
     ImageButton chat;
+
+    Button signOut;
 
     TextView fullName;
     TextView username;
@@ -41,6 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         home = (ImageButton) findViewById(R.id.home);
         chat = (ImageButton) findViewById(R.id.chat);
+        signOut = (Button) findViewById(R.id.signOut);
         thisIntent = getIntent();
 
         home.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
@@ -65,6 +72,29 @@ public class ProfileActivity extends AppCompatActivity {
         bio = (TextView) findViewById(R.id.bio);
 
         initializeActivity();
+
+        signOut.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setMessage(R.string.signOutMessage).setTitle(R.string.signOutTitle);
+                builder.setPositiveButton(R.string.signOutAccept, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        resetSharedPrefs();
+                        finish();
+                    }
+                });
+                builder.setNegativeButton(R.string.signOutCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //DOESN'T MATTER SINCE ITS CANCELED
+                    }
+                });
+
+                AlertDialog dialog = builder.show();
+            }
+        }));
     }
 
     protected void initializeActivity() {
@@ -100,5 +130,20 @@ public class ProfileActivity extends AppCompatActivity {
         currentUserData[3] = SharedPrefUtils.getString(ProfileActivity.this, getString(R.string.prefBio));
 
         return currentUserData;
+    }
+
+    /**
+     * This function is used to reset the shared prefs,
+     * it will be used when the user signs out in order
+     * to "force" him to sign in.
+     */
+    protected void resetSharedPrefs() {
+        Context thisContext = ProfileActivity.this;
+        SharedPrefUtils.saveBoolean(thisContext, getString(R.string.prefLoggedStatus), false);
+        SharedPrefUtils.saveInt(thisContext, getString(R.string.prefUserId), 0);
+        SharedPrefUtils.saveString(thisContext, getString(R.string.prefUsername), null);
+        SharedPrefUtils.saveString(thisContext, getString(R.string.prefBio), null);
+        SharedPrefUtils.saveString(thisContext, getString(R.string.prefFirstName), null);
+        SharedPrefUtils.saveString(thisContext, getString(R.string.prefLastName), null);
     }
 }

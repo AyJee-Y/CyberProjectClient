@@ -69,12 +69,11 @@
         android:layout_height="523dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/profile_menu"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.622" />
 
     <ImageView
         android:id="@+id/profilePic"
@@ -88,7 +87,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.428"
+        app:layout_constraintVertical_bias="0.163"
         app:srcCompat="@drawable/defualt_profile_icon" />
 
     <TextView
@@ -101,8 +100,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/profileMenu"
         app:layout_constraintEnd_toEndOf="@+id/profileMenu"
         app:layout_constraintStart_toStartOf="@+id/profileMenu"
-        app:layout_constraintTop_toTopOf="@+id/profileMenu"
-        app:layout_constraintVertical_bias="0.131" />
+        app:layout_constraintTop_toBottomOf="@+id/profilePic"
+        app:layout_constraintVertical_bias="0.03" />
 
     <TextView
         android:id="@+id/usernameDisplayer"
@@ -111,23 +110,50 @@
         android:text=""
         android:textAlignment="center"
         android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/profileMenu"
+        app:layout_constraintBottom_toTopOf="@+id/bio"
         app:layout_constraintEnd_toEndOf="@+id/profileMenu"
         app:layout_constraintStart_toStartOf="@+id/profileMenu"
-        app:layout_constraintTop_toTopOf="@+id/profileMenu"
-        app:layout_constraintVertical_bias="0.219" />
+        app:layout_constraintTop_toBottomOf="@+id/fullName"
+        app:layout_constraintVertical_bias="0.15" />
 
     <TextView
         android:id="@+id/bio"
-        android:layout_width="301dp"
-        android:layout_height="347dp"
+        android:layout_width="298dp"
+        android:layout_height="322dp"
         android:text=""
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/profileMenu"
         app:layout_constraintEnd_toEndOf="@+id/profileMenu"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="@+id/profileMenu"
-        app:layout_constraintTop_toTopOf="@+id/profileMenu"
-        app:layout_constraintVertical_bias="0.892" />
+        app:layout_constraintTop_toBottomOf="@+id/fullName"
+        app:layout_constraintVertical_bias="0.881" />
+
+    <Button
+        android:id="@+id/signOut"
+        android:layout_width="145dp"
+        android:layout_height="45dp"
+        android:text="Sign Out"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bio"
+        app:layout_constraintEnd_toEndOf="@+id/profileMenu"
+        app:layout_constraintHorizontal_bias="0.218"
+        app:layout_constraintStart_toStartOf="@+id/profileMenu"
+        app:layout_constraintTop_toBottomOf="@+id/usernameDisplayer"
+        app:layout_constraintVertical_bias="0.478" />
+
+    <Button
+        android:id="@+id/edit"
+        android:layout_width="84dp"
+        android:layout_height="45dp"
+        android:text="Edit"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bio"
+        app:layout_constraintEnd_toEndOf="@+id/profileMenu"
+        app:layout_constraintHorizontal_bias="0.835"
+        app:layout_constraintStart_toStartOf="@+id/profileMenu"
+        app:layout_constraintTop_toBottomOf="@+id/usernameDisplayer"
+        app:layout_constraintVertical_bias="0.478" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

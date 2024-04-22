@@ -7,4 +7,9 @@
     <string name="prefFirstName">First_Name</string>
     <string name="prefLastName">Last_Name</string>
     <string name="prefBio">Bio</string>
+
+    <string name="signOutAccept">Sign out</string>
+    <string name="signOutCancel">Cancel</string>
+    <string name="signOutMessage">You are about to sign out of your account</string>
+    <string name="signOutTitle">Sign out</string>
 </resources>
