@@ -1,5 +1,6 @@
 package com.example.cyberprojectclient;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -41,9 +42,19 @@ public class LoginActivity extends AppCompatActivity {
 
         if (SharedPrefUtils.getBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus))) {
             resetActivity();
+            updateSharedPreferences(LoginActivity.this);
             Intent i = new Intent(LoginActivity.this , HomeActivity.class);
             startActivity(i);
         }
+    }
+
+    protected void updateSharedPreferences(Context context) {
+        String[] userData = NetworkAdapter.getUserData(SharedPrefUtils.getInt(context, context.getString(R.string.prefUserId)));
+
+        SharedPrefUtils.saveString(context,  context.getString(R.string.prefUsername), userData[0]);
+        SharedPrefUtils.saveString(context,  context.getString(R.string.prefFirstName), userData[1]);
+        SharedPrefUtils.saveString(context,  context.getString(R.string.prefLastName), userData[2]);
+        SharedPrefUtils.saveString(context,  context.getString(R.string.prefBio), userData[3]);
     }
 
     protected void resetActivity() {
@@ -59,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.login);
         output = (TextView) findViewById(R.id.output);
         username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
+        password = (EditText) findViewById(R.id.bio);
         registerButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

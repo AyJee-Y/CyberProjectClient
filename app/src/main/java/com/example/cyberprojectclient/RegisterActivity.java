@@ -46,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
         output = (TextView) findViewById(R.id.output);
 
         username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
+        password = (EditText) findViewById(R.id.bio);
         passwordVerify = (EditText) findViewById(R.id.passwordVerify);
         firstName = (EditText) findViewById(R.id.firstname);
         lastName = (EditText) findViewById(R.id.lastname);

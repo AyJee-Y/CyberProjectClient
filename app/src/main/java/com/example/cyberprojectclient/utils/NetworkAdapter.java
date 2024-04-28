@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import com.example.cyberprojectclient.LoginActivity;
 import com.example.cyberprojectclient.R;
 
+import java.util.Random;
+
 public class NetworkAdapter {
     //Database structure:
     //[0] -> username
@@ -26,9 +28,30 @@ public class NetworkAdapter {
     public static void initializeUsers() {
         currentDataTable[userCount][0] = "Admin";
         currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "FirstName";
+        currentDataTable[userCount][3] = "LastName";
+        currentDataTable[userCount][4] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.";
+        userCount++;
+
+        currentDataTable[userCount][0] = "AyJee";
+        currentDataTable[userCount][1] = "12345";
         currentDataTable[userCount][2] = "Yony";
         currentDataTable[userCount][3] = "Halpern";
-        currentDataTable[userCount][4] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consectetur tristique mi, in tempus odio ultricies vitae. Ut vitae ornare.";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Brenda";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Nir";
+        currentDataTable[userCount][3] = "Brandes";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Moshe";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Rani";
+        currentDataTable[userCount][3] = "Ya'acobi";
+        currentDataTable[userCount][4] = "example for bio";
         userCount++;
     }
 
@@ -127,5 +150,28 @@ public class NetworkAdapter {
         }
         else
             return null;
+    }
+
+    /**
+     * This function will get the user data of a random user,
+     * They will be in the form of a string array with the indexes:
+     * 0 - username
+     * 1 - first name
+     * 2 - last name
+     * 3 - bio
+     *
+     * @param thisUserId the id of the user we don't want to receive
+     * @return current users data - for a profile
+     */
+    public static String[] getRandomUserData(int thisUserId) {
+        if (userCount == 1)
+            return null;
+        else {
+            int randomUserId = thisUserId;
+            while (randomUserId == thisUserId)
+                randomUserId = (new Random()).nextInt(userCount) + 1;
+
+            return getUserData(randomUserId);
+        }
     }
 }

@@ -69,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         fullName = (TextView) findViewById(R.id.fullName);
         username = (TextView) findViewById(R.id.usernameDisplayer);
-        bio = (TextView) findViewById(R.id.bio);
+        bio = (TextView) findViewById(R.id.passwordText);
 
         initializeActivity();
 
