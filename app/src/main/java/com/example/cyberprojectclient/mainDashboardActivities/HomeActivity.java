@@ -34,6 +34,9 @@ public class HomeActivity extends AppCompatActivity {
     ImageButton goodUser;
     ImageButton badUser;
 
+    String[] currentUserData;
+    int currentUserid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,13 +61,19 @@ public class HomeActivity extends AppCompatActivity {
         goodUser.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(HomeActivity.this, DirectChatActivity.class);
+                i.putExtra("userId", Integer.valueOf(currentUserData[4]));
+                i.putExtra("firstName", currentUserData[1]);
+                i.putExtra("lastName", currentUserData[2]);
+                i.putExtra("username", currentUserData[0]);
+                startActivity(i);
                 setRandomUser();
-                //IT SHOULD MOVE YOU TO PRIVATE CHAT
             }
         }));
         badUser.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 setRandomUser();
             }
         }));
@@ -93,9 +102,9 @@ public class HomeActivity extends AppCompatActivity {
         fullName.setText("loading");
         username.setText("loading");
         bio.setText("loading");
-        String[] userData = NetworkAdapter.getRandomUserData(SharedPrefUtils.getInt(HomeActivity.this, getString(R.string.prefUserId)));
-        fullName.setText(userData[1] + " " + userData[2]);
-        username.setText(userData[0]);
-        bio.setText(userData[3]);
+        currentUserData = NetworkAdapter.getRandomUserData(SharedPrefUtils.getInt(HomeActivity.this, getString(R.string.prefUserId)));
+        fullName.setText(currentUserData[1] + " " + currentUserData[2]);
+        username.setText(currentUserData[0]);
+        bio.setText(currentUserData[3]);
     }
 }

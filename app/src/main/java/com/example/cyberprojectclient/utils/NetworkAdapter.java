@@ -17,7 +17,7 @@ public class NetworkAdapter {
     //[2] -> first name
     //[3] -> last name
     //[4] -> bio
-    private static String[][] currentDataTable = new String[10][5];
+    private static String[][] currentDataTable = new String[20][5];
     private static int userCount = 0;
 
     /**
@@ -51,6 +51,55 @@ public class NetworkAdapter {
         currentDataTable[userCount][1] = "12345";
         currentDataTable[userCount][2] = "Rani";
         currentDataTable[userCount][3] = "Ya'acobi";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Benyumin";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Beny";
+        currentDataTable[userCount][3] = "Halpern";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Totalinyo";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Ron";
+        currentDataTable[userCount][3] = "Katz";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Stella";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Tomer";
+        currentDataTable[userCount][3] = "Borin";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Sielor";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Itay";
+        currentDataTable[userCount][3] = "Zenking";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Sielek";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Lior";
+        currentDataTable[userCount][3] = "Isakov";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Yanuv";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Yaniv";
+        currentDataTable[userCount][3] = "Sha'asheta";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "Itzhak";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "Shlomi";
+        currentDataTable[userCount][3] = "Rabinovich";
         currentDataTable[userCount][4] = "example for bio";
         userCount++;
     }
@@ -140,13 +189,14 @@ public class NetworkAdapter {
      * 1 - first name
      * 2 - last name
      * 3 - bio
+     * 4 - userId
      *
      * @param userId The id of the user who's data is returned
      * @return current users data - for a profile
      */
     public static String[] getUserData(int userId) {
         if (userId <= userCount && userId > 0) {
-            return (new String[] {currentDataTable[userId-1][0], currentDataTable[userId-1][2], currentDataTable[userId-1][3], currentDataTable[userId-1][4]});
+            return (new String[] {currentDataTable[userId-1][0], currentDataTable[userId-1][2], currentDataTable[userId-1][3], currentDataTable[userId-1][4], String.valueOf(userId)});
         }
         else
             return null;
@@ -159,6 +209,7 @@ public class NetworkAdapter {
      * 1 - first name
      * 2 - last name
      * 3 - bio
+     * 4 - userId
      *
      * @param thisUserId the id of the user we don't want to receive
      * @return current users data - for a profile
@@ -173,5 +224,28 @@ public class NetworkAdapter {
 
             return getUserData(randomUserId);
         }
+    }
+
+    /**
+     * This function returns the number of chats
+     * @return the number of chats
+     */
+    public static int getNumOfChats() {
+        return (new Random()).nextInt(userCount - 1) + 1;
+    }
+
+    /**
+     * This function returns the user ids of all of the
+     * users that talk with the given user
+     * @param numOfChats the number of chat the user expects
+     * @return the list of user id
+     */
+    public static int[] getUserIdChats(int numOfChats) {
+        int[] users = new int[numOfChats];
+
+        for (int i = 0; i < numOfChats; i++)
+            users[i] = i + 2;
+
+        return users;
     }
 }
