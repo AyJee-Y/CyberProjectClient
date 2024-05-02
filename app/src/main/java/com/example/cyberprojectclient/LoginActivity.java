@@ -2,8 +2,10 @@ package com.example.cyberprojectclient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -50,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void updateSharedPreferences(Context context) {
         String[] userData = NetworkAdapter.getUserData(SharedPrefUtils.getInt(context, context.getString(R.string.prefUserId)));
-
+        Log.d("UserId", String.valueOf(SharedPrefUtils.getInt(context, context.getString(R.string.prefUserId))));
         SharedPrefUtils.saveString(context,  context.getString(R.string.prefUsername), userData[0]);
         SharedPrefUtils.saveString(context,  context.getString(R.string.prefFirstName), userData[1]);
         SharedPrefUtils.saveString(context,  context.getString(R.string.prefLastName), userData[2]);
@@ -70,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.login);
         output = (TextView) findViewById(R.id.output);
         username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.bio);
+        password = (EditText) findViewById(R.id.passwordLogin);
         registerButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +95,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(i);
+
+                    resetActivity();
                 }
                 else {
                     output.setText("Incorrect username or password");

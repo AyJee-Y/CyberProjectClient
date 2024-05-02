@@ -37,8 +37,9 @@ public class ListAdapter extends ArrayAdapter<User> {
         TextView username = convertView.findViewById(R.id.username);
 
         imageView.setImageResource(R.drawable.profile_icon);
-        fullName.setText(user.firstName + " " + user.lastName);
-        username.setText(user.username);
+        assert user != null;
+        fullName.setText(user.getFirstName().concat(" ").concat(user.getLastName()));
+        username.setText(user.getUsername());
 
 
         return convertView;

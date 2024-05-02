@@ -1,8 +1,8 @@
 package com.example.cyberprojectclient.utils;
 
 public class User {
-    String firstName, lastName, username;
-    int userId;
+    private String firstName, lastName, username;
+    private int userId;
 
     public User(String firstName, String lastName, String username, int userId) {
         this.firstName = firstName;
@@ -10,4 +10,9 @@ public class User {
         this.username = username;
         this.userId = userId;
     }
+
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getUsername() { return username; }
+    public int getUserId() { return userId; }
 }
