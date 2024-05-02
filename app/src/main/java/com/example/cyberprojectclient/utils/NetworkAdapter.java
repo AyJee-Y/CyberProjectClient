@@ -139,7 +139,7 @@ public class NetworkAdapter {
      * @param userid The id of the user's account
      * @param thisContext The context of the activity in which the user logged in
      */
-    private static void setThisUserData(int userid, Context thisContext) {
+    public static void setThisUserData(int userid, Context thisContext) {
         SharedPrefUtils.saveBoolean(thisContext,  thisContext.getString(R.string.prefLoggedStatus), true);
         SharedPrefUtils.saveInt(thisContext,  thisContext.getString(R.string.prefUserId), userid);
         SharedPrefUtils.saveString(thisContext,  thisContext.getString(R.string.prefUsername), currentDataTable[userid-1][0]);
@@ -200,6 +200,20 @@ public class NetworkAdapter {
         }
         else
             return null;
+    }
+
+    /**
+     * Saves a users new profile data
+     *
+     * @param userId The user id of the user to sat data
+     * @param firstname The new first name
+     * @param lastname The new last name
+     * @param bio The new biogrophy
+     */
+    public static void changeUserData(int userId, String firstname, String lastname, String bio) {
+        currentDataTable[userId-1][2] = firstname;
+        currentDataTable[userId-1][3] = lastname;
+        currentDataTable[userId-1][4] = bio;
     }
 
     /**

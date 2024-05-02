@@ -25,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
     ImageButton home;
     ImageButton chat;
 
+    Button edit;
     Button signOut;
 
     TextView fullName;
@@ -48,6 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
         home = (ImageButton) findViewById(R.id.home);
         chat = (ImageButton) findViewById(R.id.chat);
         signOut = (Button) findViewById(R.id.signOut);
+        edit = (Button) findViewById(R.id.edit);
         thisIntent = getIntent();
 
         home.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
@@ -67,12 +69,21 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }));
 
+
         fullName = (TextView) findViewById(R.id.fullName);
         username = (TextView) findViewById(R.id.usernameDisplayer);
-        bio = (TextView) findViewById(R.id.passwordText);
+        bio = (TextView) findViewById(R.id.bioText);
 
         initializeActivity();
 
+        edit.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ProfileActivity.this , ProfileEditor.class);
+                startActivity(i);
+                finish();
+            }
+        }));
         signOut.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
