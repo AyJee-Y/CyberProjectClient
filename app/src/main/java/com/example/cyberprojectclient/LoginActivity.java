@@ -18,8 +18,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
+import com.example.cyberprojectclient.network.Client;
 import com.example.cyberprojectclient.utils.NetworkAdapter;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
+
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -28,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView output;
     EditText username;
     EditText password;
+    Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +43,13 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        client = Client.getInstance();
         NetworkAdapter.initializeUsers();
         initializeActivity();
 
         if (SharedPrefUtils.getBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus))) {
+            Log.d("logged", String.valueOf(SharedPrefUtils.getBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus))));
+            Log.d("userId", String.valueOf(SharedPrefUtils.getInt(LoginActivity.this, getString(R.string.prefUserId))));
             resetActivity();
             updateSharedPreferences(LoginActivity.this);
             Intent i = new Intent(LoginActivity.this , HomeActivity.class);
@@ -88,10 +95,14 @@ public class LoginActivity extends AppCompatActivity {
                 String enteredUsername = username.getText().toString();
                 String enteredPassword = password.getText().toString();
 
-                if (NetworkAdapter.attemptSignIn(enteredUsername, enteredPassword, LoginActivity.this)) {
+                int userId = client.attemptSignIn(enteredUsername, enteredPassword);
+
+                if (userId != -1) {
                     output.setText("Signed in");
                     output.setTextColor(Color.GREEN);
                     output.setTextSize(32);
+
+                    setUpSharedPreferences(userId);
 
                     Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(i);
@@ -105,5 +116,20 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         }));
+    }
+
+    protected void setUpSharedPreferences(int userId) {
+        try {
+            JSONObject profileData = client.getProfileData(userId);
+
+            SharedPrefUtils.saveBoolean(this, getString(R.string.prefLoggedStatus), true);
+            SharedPrefUtils.saveInt(this, getString(R.string.prefUserId), userId);
+            SharedPrefUtils.saveString(this, getString(R.string.prefFirstName), profileData.getString("firstName"));
+            SharedPrefUtils.saveString(this, getString(R.string.prefLastName), profileData.getString("lastName"));
+            SharedPrefUtils.saveString(this, getString(R.string.prefUsername), profileData.getString("username"));
+            SharedPrefUtils.saveString(this, getString(R.string.prefBio), profileData.getString("bio"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

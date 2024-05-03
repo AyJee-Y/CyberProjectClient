@@ -4,6 +4,7 @@ import static android.app.PendingIntent.getActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.cyberprojectclient.LoginActivity;
 import com.example.cyberprojectclient.R;
@@ -100,6 +101,13 @@ public class NetworkAdapter {
         currentDataTable[userCount][1] = "12345";
         currentDataTable[userCount][2] = "Shlomi";
         currentDataTable[userCount][3] = "Rabinovich";
+        currentDataTable[userCount][4] = "example for bio";
+        userCount++;
+
+        currentDataTable[userCount][0] = "a";
+        currentDataTable[userCount][1] = "12345";
+        currentDataTable[userCount][2] = "b";
+        currentDataTable[userCount][3] = "c";
         currentDataTable[userCount][4] = "example for bio";
         userCount++;
     }
