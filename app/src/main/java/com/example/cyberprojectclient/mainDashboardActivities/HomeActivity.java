@@ -1,6 +1,7 @@
 package com.example.cyberprojectclient.mainDashboardActivities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
@@ -20,9 +21,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
-import com.example.cyberprojectclient.utils.NetworkAdapter;
+import com.example.cyberprojectclient.network.Client;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 public class HomeActivity extends AppCompatActivity {
@@ -34,8 +37,12 @@ public class HomeActivity extends AppCompatActivity {
     ImageButton goodUser;
     ImageButton badUser;
 
-    String[] currentUserData;
-    int currentUserid;
+    String randomUserId;
+    String randomFirstName;
+    String randomLastName;
+    String randomUsername;
+
+    Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,7 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        client = Client.getInstance();
 
         profile = (ImageButton) findViewById(R.id.profile);
         chat = (ImageButton) findViewById(R.id.chat);
@@ -62,19 +70,27 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(HomeActivity.this, DirectChatActivity.class);
-                i.putExtra("userId", Integer.valueOf(currentUserData[4]));
-                i.putExtra("firstName", currentUserData[1]);
-                i.putExtra("lastName", currentUserData[2]);
-                i.putExtra("username", currentUserData[0]);
+                i.putExtra("userId", Integer.getInteger(randomUserId));
+                i.putExtra("firstName", randomFirstName);
+                i.putExtra("lastName", randomLastName);
+                i.putExtra("username", randomUsername);
                 startActivity(i);
-                setRandomUser();
+                try {
+                    setRandomUser();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }));
         badUser.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                setRandomUser();
+                try {
+                    setRandomUser();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }));
         profile.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
@@ -95,16 +111,35 @@ public class HomeActivity extends AppCompatActivity {
             }
         }));
 
-        setRandomUser();
+        try {
+            setRandomUser();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected void setRandomUser() {
-        fullName.setText("loading");
-        username.setText("loading");
-        bio.setText("loading");
-        currentUserData = NetworkAdapter.getRandomUserData(SharedPrefUtils.getInt(HomeActivity.this, getString(R.string.prefUserId)));
-        fullName.setText(currentUserData[1] + " " + currentUserData[2]);
-        username.setText(currentUserData[0]);
-        bio.setText(currentUserData[3]);
+    protected void setRandomUser() throws JSONException {
+        fullName.setText("");
+        username.setText("");
+        bio.setText("");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject randomUser = (Client.getInstance()).getRandomUser(SharedPrefUtils.getInt(HomeActivity.this, getString(R.string.prefUserId)));
+                    randomUserId = String.valueOf(randomUser.get("thisUserId"));
+
+                    randomFirstName = String.valueOf(randomUser.get("firstName"));
+                    randomLastName = String.valueOf(randomUser.get("lastName"));
+                    randomUsername = String.valueOf(randomUser.get("username"));
+                    String randomBio = String.valueOf(randomUser.get("bio"));
+                    fullName.setText(randomFirstName.concat(" ").concat(randomLastName));
+                    username.setText(randomUsername);
+                    bio.setText(randomBio);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 }

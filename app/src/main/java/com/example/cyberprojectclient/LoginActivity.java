@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +20,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
 import com.example.cyberprojectclient.network.Client;
-import com.example.cyberprojectclient.utils.NetworkAdapter;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
 import org.json.JSONObject;
@@ -43,27 +43,31 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        client = Client.getInstance();
-        NetworkAdapter.initializeUsers();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                client = Client.getInstance();
+            }
+        });
         initializeActivity();
 
         if (SharedPrefUtils.getBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus))) {
-            Log.d("logged", String.valueOf(SharedPrefUtils.getBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus))));
-            Log.d("userId", String.valueOf(SharedPrefUtils.getInt(LoginActivity.this, getString(R.string.prefUserId))));
+            int userId = SharedPrefUtils.getInt(LoginActivity.this, getString(R.string.prefUserId));
+            announceUser(userId);
             resetActivity();
-            updateSharedPreferences(LoginActivity.this);
+            setUpSharedPreferences(userId);
             Intent i = new Intent(LoginActivity.this , HomeActivity.class);
             startActivity(i);
         }
     }
 
-    protected void updateSharedPreferences(Context context) {
-        String[] userData = NetworkAdapter.getUserData(SharedPrefUtils.getInt(context, context.getString(R.string.prefUserId)));
-        Log.d("UserId", String.valueOf(SharedPrefUtils.getInt(context, context.getString(R.string.prefUserId))));
-        SharedPrefUtils.saveString(context,  context.getString(R.string.prefUsername), userData[0]);
-        SharedPrefUtils.saveString(context,  context.getString(R.string.prefFirstName), userData[1]);
-        SharedPrefUtils.saveString(context,  context.getString(R.string.prefLastName), userData[2]);
-        SharedPrefUtils.saveString(context,  context.getString(R.string.prefBio), userData[3]);
+    protected void announceUser(int userId) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                client.announceUser(userId);
+            }
+        });
     }
 
     protected void resetActivity() {
@@ -94,42 +98,50 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String enteredUsername = username.getText().toString();
                 String enteredPassword = password.getText().toString();
+                resetActivity();
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        int userId = client.attemptSignIn(enteredUsername, enteredPassword);
 
-                int userId = client.attemptSignIn(enteredUsername, enteredPassword);
+                        if (userId != -1) {
+                            output.setText("Signed in");
+                            output.setTextColor(Color.GREEN);
+                            output.setTextSize(32);
 
-                if (userId != -1) {
-                    output.setText("Signed in");
-                    output.setTextColor(Color.GREEN);
-                    output.setTextSize(32);
+                            setUpSharedPreferences(userId);
 
-                    setUpSharedPreferences(userId);
-
-                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(i);
-
-                    resetActivity();
-                }
-                else {
-                    output.setText("Incorrect username or password");
-                    output.setTextColor(Color.RED);
-                    output.setTextSize(21);
-                }
+                            Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(i);
+                        }
+                        else {
+                            output.setText("Incorrect username or password");
+                            output.setTextColor(Color.RED);
+                            output.setTextSize(21);
+                        }
+                    }
+                });
             }
         }));
     }
 
     protected void setUpSharedPreferences(int userId) {
-        try {
-            JSONObject profileData = client.getProfileData(userId);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject profileData = client.getProfileData(userId);
 
-            SharedPrefUtils.saveBoolean(this, getString(R.string.prefLoggedStatus), true);
-            SharedPrefUtils.saveInt(this, getString(R.string.prefUserId), userId);
-            SharedPrefUtils.saveString(this, getString(R.string.prefFirstName), profileData.getString("firstName"));
-            SharedPrefUtils.saveString(this, getString(R.string.prefLastName), profileData.getString("lastName"));
-            SharedPrefUtils.saveString(this, getString(R.string.prefUsername), profileData.getString("username"));
-            SharedPrefUtils.saveString(this, getString(R.string.prefBio), profileData.getString("bio"));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+                    SharedPrefUtils.saveBoolean(LoginActivity.this, getString(R.string.prefLoggedStatus), true);
+                    SharedPrefUtils.saveInt(LoginActivity.this, getString(R.string.prefUserId), userId);
+                    SharedPrefUtils.saveString(LoginActivity.this, getString(R.string.prefFirstName), profileData.getString("firstName"));
+                    SharedPrefUtils.saveString(LoginActivity.this, getString(R.string.prefLastName), profileData.getString("lastName"));
+                    SharedPrefUtils.saveString(LoginActivity.this, getString(R.string.prefUsername), profileData.getString("username"));
+                    SharedPrefUtils.saveString(LoginActivity.this, getString(R.string.prefBio), profileData.getString("bio"));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 }

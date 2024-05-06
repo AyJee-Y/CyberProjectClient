@@ -1,6 +1,8 @@
 package com.example.cyberprojectclient;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +15,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.cyberprojectclient.utils.NetworkAdapter;
+import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
+import com.example.cyberprojectclient.network.Client;
+import com.example.cyberprojectclient.utils.SharedPrefUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -25,6 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText passwordVerify;
     EditText firstName;
     EditText lastName;
+    Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
             return insets;
         });
 
+        client = Client.getInstance();
         initializeActivity();
     }
 
@@ -78,14 +87,29 @@ public class RegisterActivity extends AppCompatActivity {
                 String enteredFirstName = firstName.getText().toString();
                 String enteredLastName = lastName.getText().toString();
 
-                if (NetworkAdapter.attemptRegister(enteredUsername, enteredPassword, enteredFirstName, enteredLastName)) {
-                    output.setText("Registered, please sign in");
-                    output.setTextColor(Color.GREEN);
-                }
-                else {
-                    output.setText("Existing username");
-                    output.setTextColor(Color.RED);
-                }
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject answer = client.createNewAccount(enteredUsername,enteredPassword,enteredFirstName,enteredFirstName,"");
+                        try {
+                            if (answer.get("id").equals("102")) {
+                                output.setText("Registered, please sign in");
+                                output.setTextColor(Color.GREEN);
+                                setUpSharedPreferences(Integer.valueOf(String.valueOf(answer.get("user"))));
+
+                                Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
+                                finish();
+                                startActivity(i);
+                            }
+                            else {
+                                output.setText("Existing username");
+                                output.setTextColor(Color.RED);
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
             }
         }));
     }
@@ -107,5 +131,25 @@ public class RegisterActivity extends AppCompatActivity {
             return 2; //Symbolizes - passwords aren't matching
         else
             return 3;
+    }
+
+    protected void setUpSharedPreferences(int userId) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject profileData = client.getProfileData(userId);
+
+                    SharedPrefUtils.saveBoolean(RegisterActivity.this, getString(R.string.prefLoggedStatus), true);
+                    SharedPrefUtils.saveInt(RegisterActivity.this, getString(R.string.prefUserId), userId);
+                    SharedPrefUtils.saveString(RegisterActivity.this, getString(R.string.prefFirstName), profileData.getString("firstName"));
+                    SharedPrefUtils.saveString(RegisterActivity.this, getString(R.string.prefLastName), profileData.getString("lastName"));
+                    SharedPrefUtils.saveString(RegisterActivity.this, getString(R.string.prefUsername), profileData.getString("username"));
+                    SharedPrefUtils.saveString(RegisterActivity.this, getString(R.string.prefBio), profileData.getString("bio"));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 }

@@ -59,7 +59,6 @@ public class Client {
         connector.start();
 
         while (!Connector.connectionFinished()) {}
-
         writer = new Writer(Connector.out, Connector.key);
         listener = new Listener(Connector.in, Connector.key);
     }
@@ -97,6 +96,19 @@ public class Client {
         }
     }
 
+    public void announceUser(int userId) {
+        try {
+            JSONObject packet = new JSONObject();
+
+            packet.put("id", "102");
+            packet.put("userId", String.valueOf(userId));
+
+            Writer.setPacketForSending(packet);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public JSONObject getProfileData(int userId) {
         try {
             JSONObject packet = new JSONObject();
@@ -112,6 +124,41 @@ public class Client {
             if (answer.get("id").equals("200"))
                 return answer;
             return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject getRandomUser(int userId) {
+        try {
+            JSONObject packet = new JSONObject();
+            packet.put("id", "203");
+            packet.put("selfUserId", String.valueOf(userId));
+
+            Writer.setPacketForSending(packet);
+            while (!Listener.isAnswerReceived()) {}
+            JSONObject answer = Listener.getLatestAnswer();
+            if (answer.get("id").equals("200"))
+                return answer;
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject createNewAccount(String username, String password, String firstName, String lastName, String bio) {
+        try {
+            JSONObject packet = new JSONObject();
+            packet.put("id", "101");
+            packet.put("username", username);
+            packet.put("password", password);
+            packet.put("firstName", firstName);
+            packet.put("lastName", lastName);
+            packet.put("bio", bio);
+
+            Writer.setPacketForSending(packet);
+            while (!Listener.isAnswerReceived()) {}
+            return Listener.getLatestAnswer();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

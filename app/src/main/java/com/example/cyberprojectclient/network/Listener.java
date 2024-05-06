@@ -1,6 +1,7 @@
 package com.example.cyberprojectclient.network;
 
 import android.os.Build;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.security.SecureRandom;
