@@ -2,6 +2,7 @@ package com.example.cyberprojectclient.mainDashboardActivities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,8 +16,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
+import com.example.cyberprojectclient.network.Client;
 import com.example.cyberprojectclient.utils.NetworkAdapter;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
+
+import org.json.JSONObject;
 
 public class ProfileEditor extends AppCompatActivity {
 
@@ -24,6 +28,7 @@ public class ProfileEditor extends AppCompatActivity {
     EditText firstName;
     EditText lastName;
     EditText biography;
+    Client client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +40,7 @@ public class ProfileEditor extends AppCompatActivity {
             return insets;
         });
 
+        client = Client.getInstance();
         initializeViews();
     }
 
@@ -55,14 +61,38 @@ public class ProfileEditor extends AppCompatActivity {
                 String newLastName = lastName.getText().toString();
                 String newBio = biography.getText().toString();
 
-                NetworkAdapter.changeUserData(SharedPrefUtils.getInt(ProfileEditor.this, getString(R.string.prefUserId)), newFirstName, newLastName, newBio);
-                NetworkAdapter.setThisUserData(SharedPrefUtils.getInt(ProfileEditor.this, getString(R.string.prefUserId)),ProfileEditor.this);
+                if (verifyNewData(newFirstName, newLastName, newBio)) {
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                client.changeProfileData(SharedPrefUtils.getInt(ProfileEditor.this, getString(R.string.prefUserId)),
+                                        newFirstName, newLastName, newBio);
 
-                Intent i = new Intent(ProfileEditor.this, ProfileActivity.class);
-                i.putExtra("userId", SharedPrefUtils.getInt(ProfileEditor.this, getString(R.string.prefUserId)));
-                startActivity(i);
-                finish();
+                                SharedPrefUtils.saveString(ProfileEditor.this, getString(R.string.prefFirstName), newFirstName);
+                                SharedPrefUtils.saveString(ProfileEditor.this, getString(R.string.prefLastName), newLastName);
+                                SharedPrefUtils.saveString(ProfileEditor.this, getString(R.string.prefBio), newBio);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+
+                    Intent i = new Intent(ProfileEditor.this, ProfileActivity.class);
+                    i.putExtra("userId", SharedPrefUtils.getInt(ProfileEditor.this, getString(R.string.prefUserId)));
+                    startActivity(i);
+                    finish();
+                } else {
+
+                }
+
             }
         }));
+    }
+
+    protected  boolean verifyNewData(String newFirstName, String newLastName, String newBio) {
+        if (newFirstName.equals("") || newLastName.equals("") || newBio.equals(""))
+            return false;
+
     }
 }

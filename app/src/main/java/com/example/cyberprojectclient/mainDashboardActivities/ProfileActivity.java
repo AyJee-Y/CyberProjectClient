@@ -17,8 +17,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
+import com.example.cyberprojectclient.network.Client;
 import com.example.cyberprojectclient.utils.NetworkAdapter;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -31,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView fullName;
     TextView username;
     TextView bio;
+    Client client;
 
     private int thisUserId;
     private Intent thisIntent;
@@ -45,6 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        client = Client.getInstance();
 
         home = (ImageButton) findViewById(R.id.home);
         chat = (ImageButton) findViewById(R.id.chat);
@@ -74,7 +81,11 @@ public class ProfileActivity extends AppCompatActivity {
         username = (TextView) findViewById(R.id.usernameDisplayer);
         bio = (TextView) findViewById(R.id.bioText);
 
-        initializeActivity();
+        try {
+            initializeActivity();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
         edit.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
@@ -108,14 +119,19 @@ public class ProfileActivity extends AppCompatActivity {
         }));
     }
 
-    protected void initializeActivity() {
+    protected void initializeActivity() throws JSONException {
         thisUserId = thisIntent.getIntExtra("userId", 1);
         String[] userData;
         if (thisUserId == SharedPrefUtils.getInt(ProfileActivity.this, getString(R.string.prefUserId))) {
             userData = getThisUserData();
         }
         else {
-            userData = NetworkAdapter.getUserData(thisUserId);
+            JSONObject answer = client.getProfileData(thisUserId);
+            userData = new String[4];
+            userData[0] = String.valueOf(answer.get("username"));
+            userData[1] = String.valueOf(answer.get("firstName"));
+            userData[2] = String.valueOf(answer.get("lastName"));
+            userData[3] = String.valueOf(answer.get("bio"));
         }
 
         fullName.setText(userData[1] + " " + userData[2]);

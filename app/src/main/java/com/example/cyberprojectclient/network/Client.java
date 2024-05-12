@@ -104,6 +104,9 @@ public class Client {
             packet.put("userId", String.valueOf(userId));
 
             Writer.setPacketForSending(packet);
+
+            while (!Listener.isAnswerReceived()) {}
+            Listener.getLatestAnswer();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -159,6 +162,25 @@ public class Client {
             Writer.setPacketForSending(packet);
             while (!Listener.isAnswerReceived()) {}
             return Listener.getLatestAnswer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void changeProfileData(int userId, String newFirstName, String newLastName, String newBio) {
+        try {
+            JSONObject packet = new JSONObject();
+
+            packet.put("id", "202");
+            packet.put("userId", String.valueOf(userId));
+            packet.put("newFirstName", newFirstName);
+            packet.put("newLastName", newLastName);
+            packet.put("newBio", newBio);
+
+            Writer.setPacketForSending(packet);
+
+            while (!Listener.isAnswerReceived()) {}
+            Listener.getLatestAnswer();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
