@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.mainDashboardActivities.HomeActivity;
 import com.example.cyberprojectclient.network.Client;
+import com.example.cyberprojectclient.utils.DataVerification;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
 import org.json.JSONException;
@@ -76,8 +77,23 @@ public class RegisterActivity extends AppCompatActivity {
                     output.setTextColor(Color.RED);
                     return;
                 }
-                else if (verificationResult == 2) {
+                if (verificationResult == 2) {
+                    output.setText("Weak password");
+                    output.setTextColor(Color.RED);
+                    return;
+                }
+                else if (verificationResult == 3) {
                     output.setText("Passwords not matching");
+                    output.setTextColor(Color.RED);
+                    return;
+                }
+                else if (verificationResult == 4) {
+                    output.setText("Invalid names");
+                    output.setTextColor(Color.RED);
+                    return;
+                }
+                else if (verificationResult == 5) {
+                    output.setText("Invalid username");
                     output.setTextColor(Color.RED);
                     return;
                 }
@@ -127,10 +143,16 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (enteredUsername.equals("") || enteredPassword.equals("") || enteredFirstName.equals("") || enteredLastName.equals(""))
             return 1; //Symbolizes - missing data
+        else if (!DataVerification.verifyPassword(enteredPassword))
+            return 2; //Symbolizes - Weak password
         else if (!enteredPassword.equals(enteredPasswordVerification))
-            return 2; //Symbolizes - passwords aren't matching
+            return 3; //Symbolizes - passwords aren't matching
+        else if (!DataVerification.verifyName(enteredFirstName) || !DataVerification.verifyName(enteredLastName))
+            return 4; //Symbolizes - invalid names
+        else if (!DataVerification.verifyUsername(enteredUsername))
+            return 5; //Symbolizes - invalid username
         else
-            return 3;
+            return 6;
     }
 
     protected void setUpSharedPreferences(int userId) {

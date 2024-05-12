@@ -2,6 +2,7 @@ package com.example.cyberprojectclient.network;
 
 import android.util.Log;
 
+import com.example.cyberprojectclient.utils.Message;
 import com.macasaet.fernet.Key;
 
 import org.json.JSONException;
@@ -16,6 +17,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.MGF1ParameterSpec;
@@ -64,6 +66,34 @@ public class Client {
     }
 
     /**
+     * This method using the SHA-256 algorithm
+     * hashes a given string, this method is for ensuring
+     * the password wont be saved in the server to
+     * prevent data leak;
+     * @param string The string to be hashed
+     * @return The hashed string
+     */
+    private String hashString(String string) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(string.getBytes());
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte hashByte : hashBytes) {
+                String hex = Integer.toHexString(0xff & hashByte);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * This method will attempt to sign into an account, it will
      * receive the userId of the account it signed into if the signing
      * was successful, otherwise it will return -1
@@ -79,7 +109,7 @@ public class Client {
 
             packet.put("id", "100");
             packet.put("username", username);
-            packet.put("password", password);
+            packet.put("password", hashString(password));
             //Log.d("TEST", "1");
             Writer.setPacketForSending(packet);
             //Log.d("TEST", "2");
@@ -154,7 +184,7 @@ public class Client {
             JSONObject packet = new JSONObject();
             packet.put("id", "101");
             packet.put("username", username);
-            packet.put("password", password);
+            packet.put("password", hashString(password));
             packet.put("firstName", firstName);
             packet.put("lastName", lastName);
             packet.put("bio", bio);

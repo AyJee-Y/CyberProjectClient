@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cyberprojectclient.R;
 import com.example.cyberprojectclient.network.Client;
+import com.example.cyberprojectclient.utils.DataVerification;
 import com.example.cyberprojectclient.utils.NetworkAdapter;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
 
@@ -91,8 +92,6 @@ public class ProfileEditor extends AppCompatActivity {
     }
 
     protected  boolean verifyNewData(String newFirstName, String newLastName, String newBio) {
-        if (newFirstName.equals("") || newLastName.equals("") || newBio.equals(""))
-            return false;
-
+        return (DataVerification.verifyName(newFirstName) && DataVerification.verifyName(newLastName) && DataVerification.verifyBio(newBio));
     }
 }
