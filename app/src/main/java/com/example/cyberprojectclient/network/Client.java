@@ -142,6 +142,22 @@ public class Client {
         }
     }
 
+    public JSONObject getUserChats(int userId) {
+        try {
+            JSONObject packet = new JSONObject();
+
+            packet.put("id", "300");
+            packet.put("user", String.valueOf(userId));
+
+            Writer.setPacketForSending(packet);
+
+            while (!Listener.isAnswerReceived()) {}
+            return Listener.getLatestAnswer();
+        } catch (Exception e) {
+            throw  new RuntimeException(e);
+        }
+    }
+
     public JSONObject getProfileData(int userId) {
         try {
             JSONObject packet = new JSONObject();
