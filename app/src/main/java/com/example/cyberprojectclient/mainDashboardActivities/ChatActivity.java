@@ -78,28 +78,6 @@ public class ChatActivity extends AppCompatActivity {
         }));
 
         setUpChatUsers();
-
-        ArrayList<User> userArrayList = new ArrayList<>();
-        for (int i = 0; i < userIds.length; i++) {
-            User user = new User(firstNames[i], lastNames[i], usernames[i], userIds[i]);
-            userArrayList.add(user);
-        }
-
-        ListAdapter listAdapter = new ListAdapter(ChatActivity.this, userArrayList);
-
-        binding.chatList.setAdapter(listAdapter);
-        binding.chatList.setClickable(true);
-        binding.chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(ChatActivity.this, DirectChatActivity.class);
-                i.putExtra("userId", userIds[position]);
-                i.putExtra("firstName", firstNames[position]);
-                i.putExtra("lastName", lastNames[position]);
-                i.putExtra("username", usernames[position]);
-                startActivity(i);
-            }
-        });
     }
 
     protected void setUpChatUsers() {

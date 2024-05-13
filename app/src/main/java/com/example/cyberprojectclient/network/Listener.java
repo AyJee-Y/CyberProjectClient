@@ -72,8 +72,7 @@ public class Listener extends Thread {
     }
 
     /**
-     * @return Whether an answer from the server
-     * was given
+     * @return Whether an answer from the server was given
      */
     public static boolean isAnswerReceived() {
         lock.lock();
