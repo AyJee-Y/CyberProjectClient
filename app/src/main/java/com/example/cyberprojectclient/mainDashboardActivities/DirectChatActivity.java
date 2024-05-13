@@ -1,9 +1,11 @@
 package com.example.cyberprojectclient.mainDashboardActivities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -27,12 +30,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cyberprojectclient.LoginActivity;
 import com.example.cyberprojectclient.R;
+import com.example.cyberprojectclient.network.Client;
+import com.example.cyberprojectclient.utils.ListAdapter;
 import com.example.cyberprojectclient.utils.Message;
 import com.example.cyberprojectclient.utils.MessageListAdapter;
 import com.example.cyberprojectclient.utils.NetworkAdapter;
 import com.example.cyberprojectclient.utils.SharedPrefUtils;
 import com.example.cyberprojectclient.utils.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -47,19 +54,29 @@ public class DirectChatActivity extends AppCompatActivity {
     String thisUserLastName;
     String thisUserUsername;
     int thisUserUserId;
-    int userId;
-    String firstName;
-    String lastname;
-    String username;
+    int otherUserId;
+    String otherFirstName;
+    String otherLastname;
+    String otherUsername;
     TextView fullNameText;
     TextView usernameText;
     ImageButton returnButton;
 
     EditText messageSender;
     Button sendButton;
+    Button loadButton;
+    User thisUser;
+    User otherUser;
+
+    Client client;
 
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
+    private ArrayList<Message> messageList;
+
+    int[] listOfMessageIds;
+    int currentChadId;
+    int currentMessagesLoaded = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,25 +90,33 @@ public class DirectChatActivity extends AppCompatActivity {
         });
         Intent thisIntent = getIntent();
 
-        userId = thisIntent.getIntExtra("userId", 1);
-        firstName = thisIntent.getStringExtra("firstName");
-        lastname = thisIntent.getStringExtra("lastName");
-        username = thisIntent.getStringExtra("username");
+        thisUserFirstName = SharedPrefUtils.getString(this, this.getString(R.string.prefFirstName));
+        thisUserLastName = SharedPrefUtils.getString(this, this.getString(R.string.prefLastName));
+        thisUserUsername = SharedPrefUtils.getString(this, this.getString(R.string.prefUsername));
+        thisUserUserId = SharedPrefUtils.getInt(this, this.getString(R.string.prefUserId));
+
+        otherUserId = thisIntent.getIntExtra("userId", 1);
+        otherFirstName = thisIntent.getStringExtra("firstName");
+        otherLastname = thisIntent.getStringExtra("lastName");
+        otherUsername = thisIntent.getStringExtra("username");
 
         fullNameText = (TextView)findViewById(R.id.fullName);
         usernameText = (TextView)findViewById(R.id.username);
         returnButton = (ImageButton)findViewById(R.id.returnButton);
 
-        fullNameText.setText(firstName.concat(" ").concat(lastname));
-        usernameText.setText(username.concat(" ").concat(String.valueOf(userId)));
-        returnButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        }));
+        fullNameText.setText(otherFirstName.concat(" ").concat(otherLastname));
+        usernameText.setText(otherUsername);
 
-        ArrayList<Message> messageList = new ArrayList<>();
+        thisUser = new User(thisUserFirstName, thisUserLastName, thisUserUsername, thisUserUserId);
+        otherUser = new User(otherFirstName, otherLastname, otherUsername, otherUserId);
+
+        setUpBaseChat();
+        setUpButtons();
+        getMessagesFromServer();
+    }
+
+    protected void setUpBaseChat() {
+        messageList = new ArrayList<>();
 
         mMessageRecycler = (RecyclerView) findViewById(R.id.recycler_gchat);
         mMessageAdapter = new MessageListAdapter(this, messageList);
@@ -99,14 +124,11 @@ public class DirectChatActivity extends AppCompatActivity {
         mMessageRecycler.setAdapter(mMessageAdapter);
 
         messageSender = (EditText) findViewById(R.id.edit_gchat_message);
-        sendButton = (Button) findViewById(R.id.button_gchat_send);
+    }
 
-        thisUserFirstName = SharedPrefUtils.getString(this, this.getString(R.string.prefFirstName));
-        thisUserLastName = SharedPrefUtils.getString(this, this.getString(R.string.prefLastName));
-        thisUserUsername = SharedPrefUtils.getString(this, this.getString(R.string.prefUsername));
-        thisUserUserId = SharedPrefUtils.getInt(this, this.getString(R.string.prefUserId));
-
-        User thisUser = new User(thisUserFirstName, thisUserLastName, thisUserUsername, thisUserUserId);
+    protected void setUpButtons() {
+        sendButton = (Button)findViewById(R.id.button_gchat_send);
+        returnButton = (ImageButton)findViewById(R.id.returnButton);
         sendButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +138,79 @@ public class DirectChatActivity extends AppCompatActivity {
                 mMessageAdapter.notifyItemInserted(messageList.size());
             }
         }));
+        returnButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        }));
+    }
 
+    protected void getMessagesFromServer() {
+        client = Client.getInstance();
 
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject thisChatMessages = client.getChatBetween(thisUserUserId, otherUserId);
+                    listOfMessageIds = new int[Integer.valueOf(String.valueOf(thisChatMessages.get("numOfMessages")))];
+                    currentChadId = Integer.valueOf(String.valueOf(thisChatMessages.get("chatId")));
+
+                    String baseKey = "messageId";
+                    for (int i = 0; i < listOfMessageIds.length; i++) {
+                        String currentKey = baseKey.concat(String.valueOf(i + 1));
+                        listOfMessageIds[i] = Integer.valueOf(String.valueOf(thisChatMessages.get(currentKey)));
+                    }
+
+                    currentMessagesLoaded = 0;
+                    loadMessages();
+                    setUpLoadButton();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
+    protected void setUpLoadButton() {
+        loadButton = (Button)findViewById(R.id.loadMessagesButton);
+        loadButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadMessages();
+            }
+        }));
+    }
+
+    protected void loadMessages() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < 10 && currentMessagesLoaded < listOfMessageIds.length; i++) {
+                        JSONObject currentMessage = client.getMessage(currentChadId, listOfMessageIds[currentMessagesLoaded]);
+                        currentMessagesLoaded++;
+
+                        int thisUserId = Integer.valueOf(String.valueOf(currentMessage.get("senderId")));
+                        User currentUser;
+                        if (thisUserId == thisUserUserId)
+                            currentUser = thisUser;
+                        else
+                            currentUser = otherUser;
+                        Message thisMessage = new Message(String.valueOf(currentMessage.get("content")), currentUser);
+
+                        messageList.add(0, thisMessage);
+                        runOnUiThread(new Runnable(){
+                            public void run() {
+                                mMessageAdapter.notifyItemRangeChanged(1, messageList.size());
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 }

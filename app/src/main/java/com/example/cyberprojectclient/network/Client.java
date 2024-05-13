@@ -231,4 +231,38 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
+    public JSONObject getChatBetween(int selfUserId, int otherUserId) {
+        try {
+            JSONObject packet = new JSONObject();
+
+            packet.put("id", "301");
+            packet.put("selfUser", String.valueOf(selfUserId));
+            packet.put("otherUser", String.valueOf(otherUserId));
+
+            Writer.setPacketForSending(packet);
+
+            while (!Listener.isAnswerReceived()) {}
+            return Listener.getLatestAnswer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject getMessage(int chadId, int messageId) {
+        try {
+            JSONObject packet = new JSONObject();
+
+            packet.put("id", "304");
+            packet.put("chatId", String.valueOf(chadId));
+            packet.put("messageId", String.valueOf(messageId));
+
+            Writer.setPacketForSending(packet);
+
+            while (!Listener.isAnswerReceived()) {}
+            return Listener.getLatestAnswer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
