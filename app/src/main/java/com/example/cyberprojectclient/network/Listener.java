@@ -59,7 +59,6 @@ public class Listener extends Thread {
         while (serverOpen) {
             try {
                 String encryptedReply = in.readLine();
-                Log.d("TEST", encryptedReply);
                 String decryptedReply = decryptMessageAES(encryptedReply, key);
                 decryptedReply = decryptedReply.replace("'", "\"");
                 JSONObject jo = new JSONObject(decryptedReply);
@@ -72,11 +71,16 @@ public class Listener extends Thread {
 
                     lock.unlock();
                 } else {
+                    Log.d("TEST", "1");
                     chatLock.lock();
                     if (inChat) {
+                        Log.d("TEST", "2");
                         int receivedChat = Integer.valueOf(String.valueOf(jo.get("chatId")));
+                        Log.d("TEST", String.valueOf(receivedChat));
+                        Log.d("TEST", String.valueOf(chatId));
                         if (receivedChat == chatId){
-                            currentChatActivity.notifyMessage();
+                            Log.d("TEST", "3");
+                            currentChatActivity.reloadMessages();
                         }
                     }
                     chatLock.unlock();
@@ -84,6 +88,7 @@ public class Listener extends Thread {
 
             } catch (Exception e) {
                 serverOpen = false;
+                throw  new RuntimeException(e);
             }
         }
     }

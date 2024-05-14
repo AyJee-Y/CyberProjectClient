@@ -127,7 +127,7 @@ public class DirectChatActivity extends AppCompatActivity {
         messageSender = (EditText) findViewById(R.id.edit_gchat_message);
     }
 
-    protected void reloadMessages() {
+    public void reloadMessages() {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -153,6 +153,7 @@ public class DirectChatActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable(){
                                 public void run() {
                                     mMessageAdapter.notifyItemInserted(messageList.size());
+                                    mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
                                 }
                             });
                         }
@@ -256,6 +257,7 @@ public class DirectChatActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable(){
                             public void run() {
                                 mMessageAdapter.notifyItemRangeChanged(1, messageList.size());
+                                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
                             }
                         });
                     }
@@ -264,9 +266,5 @@ public class DirectChatActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    public void notifyMessage() {
-        //THIS IS CALLED WHEN YOU RECEIVED A MESSAGE
     }
 }
