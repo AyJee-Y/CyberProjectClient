@@ -59,6 +59,7 @@ public class Listener extends Thread {
         while (serverOpen) {
             try {
                 String encryptedReply = in.readLine();
+                Log.d("TEST", encryptedReply);
                 String decryptedReply = decryptMessageAES(encryptedReply, key);
                 decryptedReply = decryptedReply.replace("'", "\"");
                 JSONObject jo = new JSONObject(decryptedReply);
@@ -83,7 +84,6 @@ public class Listener extends Thread {
 
             } catch (Exception e) {
                 serverOpen = false;
-                throw new RuntimeException(e);
             }
         }
     }

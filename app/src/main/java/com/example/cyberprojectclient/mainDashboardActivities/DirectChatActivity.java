@@ -127,6 +127,44 @@ public class DirectChatActivity extends AppCompatActivity {
         messageSender = (EditText) findViewById(R.id.edit_gchat_message);
     }
 
+    protected void reloadMessages() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject allMessages = client.getChatBetween(thisUserUserId, otherUserId);
+
+                    int numOfMessages = Integer.valueOf(String.valueOf(allMessages.get("numOfMessages")));
+                    if (numOfMessages != listOfMessageIds.size()) {
+                        for (int i = numOfMessages - listOfMessageIds.size(); i > 0; i--) {
+                            String currentKey = "messageId".concat(String.valueOf(i));
+                            int currentMessageId = Integer.valueOf(String.valueOf(allMessages.get(currentKey)));
+                            JSONObject currentMessage = client.getMessage(currentChadId, currentMessageId);
+
+                            listOfMessageIds.add(0, currentMessageId);
+                            int senderId = Integer.valueOf(String.valueOf(currentMessage.get("senderId")));
+                            Message message;
+                            if (senderId == thisUserUserId)
+                                message = new Message(String.valueOf(currentMessage.get("content")), thisUser);
+                            else
+                                message = new Message(String.valueOf(currentMessage.get("content")), otherUser);
+                            currentMessagesLoaded++;
+                            messageList.add(message);
+                            runOnUiThread(new Runnable(){
+                                public void run() {
+                                    mMessageAdapter.notifyItemInserted(messageList.size());
+                                }
+                            });
+                        }
+                        numOfMessages = listOfMessageIds.size();
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
     protected void setUpButtons() {
         sendButton = (Button)findViewById(R.id.button_gchat_send);
         returnButton = (ImageButton)findViewById(R.id.returnButton);
@@ -141,18 +179,7 @@ public class DirectChatActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             JSONObject confirmation = client.sendMessage(currentChadId, thisUserUserId, message.getMessage());
-                            int thisMessageId = Integer.valueOf(String.valueOf(confirmation.get("messageId")));
-
-                            listOfMessageIds.add(0, thisMessageId);
-
-                            numOfMessages++;
-                            currentMessagesLoaded++;
-                            messageList.add(message);
-                            runOnUiThread(new Runnable(){
-                                public void run() {
-                                    mMessageAdapter.notifyItemInserted(messageList.size());
-                                }
-                            });
+                            reloadMessages();
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
