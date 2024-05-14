@@ -52,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         client = Client.getInstance();
+        client.setUpChatParamters(false, 0, null);
 
         home = (ImageButton) findViewById(R.id.home);
         chat = (ImageButton) findViewById(R.id.chat);

@@ -180,6 +180,8 @@ public class DirectChatActivity extends AppCompatActivity {
                     listOfMessageIds = new ArrayList<>();
                     currentChadId = Integer.valueOf(String.valueOf(thisChatMessages.get("chatId")));
 
+                    client.setUpChatParamters(true, currentChadId, DirectChatActivity.this);
+
                     String baseKey = "messageId";
                     for (int i = 0; i < numOfMessages; i++) {
                         String currentKey = baseKey.concat(String.valueOf(i + 1));
@@ -235,5 +237,9 @@ public class DirectChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void notifyMessage() {
+        //THIS IS CALLED WHEN YOU RECEIVED A MESSAGE
     }
 }

@@ -47,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         client = Client.getInstance();
+        client.setUpChatParamters(false, 0, null);
         initializeActivity();
     }
 

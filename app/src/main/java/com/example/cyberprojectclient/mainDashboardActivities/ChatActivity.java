@@ -58,6 +58,7 @@ public class ChatActivity extends AppCompatActivity {
         profile = (ImageButton) findViewById(R.id.profile);
 
         client = Client.getInstance();
+        client.setUpChatParamters(false, 0, null);
 
         home.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             @Override

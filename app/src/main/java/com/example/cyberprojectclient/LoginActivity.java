@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void run() {
                 client = Client.getInstance();
+                client.setUpChatParamters(false, 0, null);
             }
         });
         initializeActivity();

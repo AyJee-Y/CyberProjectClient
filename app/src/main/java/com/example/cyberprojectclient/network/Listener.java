@@ -1,5 +1,6 @@
 package com.example.cyberprojectclient.network;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 import com.example.cyberprojectclient.R;
+import com.example.cyberprojectclient.mainDashboardActivities.DirectChatActivity;
 import com.macasaet.fernet.Key;
 import com.macasaet.fernet.StringValidator;
 import com.macasaet.fernet.Token;
@@ -26,6 +28,11 @@ public class Listener extends Thread {
     private static JSONObject latestAnswer;
     private static boolean receivedAnswer;
     private static ReentrantLock lock = new ReentrantLock();
+    private static boolean inChat;
+    private static int chatId;
+    @SuppressLint("StaticFieldLeak")
+    private static DirectChatActivity currentChatActivity;
+    private static ReentrantLock chatLock = new ReentrantLock();
 
     /**
      * Creates an instance of a Listener,
@@ -48,6 +55,7 @@ public class Listener extends Thread {
      */
     public void run() {
         boolean serverOpen = true;
+        inChat = false;
         while (serverOpen) {
             try {
                 String encryptedReply = in.readLine();
@@ -62,6 +70,15 @@ public class Listener extends Thread {
                     latestAnswer = jo;
 
                     lock.unlock();
+                } else {
+                    chatLock.lock();
+                    if (inChat) {
+                        int receivedChat = Integer.valueOf(String.valueOf(jo.get("chatId")));
+                        if (receivedChat == chatId){
+                            currentChatActivity.notifyMessage();
+                        }
+                    }
+                    chatLock.unlock();
                 }
 
             } catch (Exception e) {
@@ -113,5 +130,13 @@ public class Listener extends Thread {
 
         final String payload = token.validateAndDecrypt(key, validator);
         return payload;
+    }
+
+    public static void setUpChatParamters(boolean inChatActivity, int activityChatId, DirectChatActivity activity) {
+        chatLock.lock();
+        inChat = inChatActivity;
+        chatId = activityChatId;
+        currentChatActivity = activity;
+        chatLock.unlock();
     }
 }

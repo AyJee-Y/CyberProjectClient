@@ -2,6 +2,7 @@ package com.example.cyberprojectclient.network;
 
 import android.util.Log;
 
+import com.example.cyberprojectclient.mainDashboardActivities.DirectChatActivity;
 import com.example.cyberprojectclient.utils.Message;
 import com.macasaet.fernet.Key;
 
@@ -282,5 +283,9 @@ public class Client {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setUpChatParamters(boolean inChatActivity, int activityChatId, DirectChatActivity activity) {
+        Listener.setUpChatParamters(inChatActivity, activityChatId, activity);
     }
 }
