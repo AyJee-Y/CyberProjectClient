@@ -265,4 +265,22 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
+    public JSONObject sendMessage(int currentChadId, int thisUserUserId, String message) {
+        try {
+            JSONObject packet = new JSONObject();
+
+            packet.put("id", "302");
+            packet.put("chatId", String.valueOf(currentChadId));
+            packet.put("selfUserId", String.valueOf(thisUserUserId));
+            packet.put("content", message);
+
+            Writer.setPacketForSending(packet);
+
+            while (!Listener.isAnswerReceived()) {}
+            return Listener.getLatestAnswer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

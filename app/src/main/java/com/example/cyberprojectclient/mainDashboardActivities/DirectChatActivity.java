@@ -74,9 +74,10 @@ public class DirectChatActivity extends AppCompatActivity {
     private MessageListAdapter mMessageAdapter;
     private ArrayList<Message> messageList;
 
-    int[] listOfMessageIds;
+    ArrayList<Integer> listOfMessageIds;
     int currentChadId;
     int currentMessagesLoaded = 0;
+    int numOfMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,8 +135,29 @@ public class DirectChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Message message = new Message(messageSender.getText().toString(), thisUser);
                 messageSender.setText("");
-                messageList.add(message);
-                mMessageAdapter.notifyItemInserted(messageList.size());
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject confirmation = client.sendMessage(currentChadId, thisUserUserId, message.getMessage());
+                            int thisMessageId = Integer.valueOf(String.valueOf(confirmation.get("messageId")));
+
+                            listOfMessageIds.add(0, thisMessageId);
+
+                            numOfMessages++;
+                            currentMessagesLoaded++;
+                            messageList.add(message);
+                            runOnUiThread(new Runnable(){
+                                public void run() {
+                                    mMessageAdapter.notifyItemInserted(messageList.size());
+                                }
+                            });
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
             }
         }));
         returnButton.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
@@ -154,13 +176,14 @@ public class DirectChatActivity extends AppCompatActivity {
             public void run() {
                 try {
                     JSONObject thisChatMessages = client.getChatBetween(thisUserUserId, otherUserId);
-                    listOfMessageIds = new int[Integer.valueOf(String.valueOf(thisChatMessages.get("numOfMessages")))];
+                    numOfMessages = Integer.valueOf(String.valueOf(thisChatMessages.get("numOfMessages")));
+                    listOfMessageIds = new ArrayList<>();
                     currentChadId = Integer.valueOf(String.valueOf(thisChatMessages.get("chatId")));
 
                     String baseKey = "messageId";
-                    for (int i = 0; i < listOfMessageIds.length; i++) {
+                    for (int i = 0; i < numOfMessages; i++) {
                         String currentKey = baseKey.concat(String.valueOf(i + 1));
-                        listOfMessageIds[i] = Integer.valueOf(String.valueOf(thisChatMessages.get(currentKey)));
+                        listOfMessageIds.add(Integer.valueOf(String.valueOf(thisChatMessages.get(currentKey))));
                     }
 
                     currentMessagesLoaded = 0;
@@ -188,8 +211,8 @@ public class DirectChatActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    for (int i = 0; i < 10 && currentMessagesLoaded < listOfMessageIds.length; i++) {
-                        JSONObject currentMessage = client.getMessage(currentChadId, listOfMessageIds[currentMessagesLoaded]);
+                    for (int i = 0; i < 10 && currentMessagesLoaded < numOfMessages; i++) {
+                        JSONObject currentMessage = client.getMessage(currentChadId, listOfMessageIds.get(currentMessagesLoaded));
                         currentMessagesLoaded++;
 
                         int thisUserId = Integer.valueOf(String.valueOf(currentMessage.get("senderId")));

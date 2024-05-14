@@ -127,18 +127,21 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 ListAdapter listAdapter = new ListAdapter(ChatActivity.this, userArrayList);
-
-                binding.chatList.setAdapter(listAdapter);
-                binding.chatList.setClickable(true);
-                binding.chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent i = new Intent(ChatActivity.this, DirectChatActivity.class);
-                        i.putExtra("userId", userIds[position]);
-                        i.putExtra("firstName", firstNames[position]);
-                        i.putExtra("lastName", lastNames[position]);
-                        i.putExtra("username", usernames[position]);
-                        startActivity(i);
+                runOnUiThread(new Runnable(){
+                    public void run() {
+                        binding.chatList.setAdapter(listAdapter);
+                        binding.chatList.setClickable(true);
+                        binding.chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent i = new Intent(ChatActivity.this, DirectChatActivity.class);
+                                i.putExtra("userId", userIds[position]);
+                                i.putExtra("firstName", firstNames[position]);
+                                i.putExtra("lastName", lastNames[position]);
+                                i.putExtra("username", usernames[position]);
+                                startActivity(i);
+                            }
+                        });
                     }
                 });
             }
